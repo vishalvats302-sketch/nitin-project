@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Quiz App</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&family=Archivo+Black&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body data-theme="light">
+  <a class="skip-link" href="#main">Skip to quiz</a>
+
+  <header class="app-header">
+    <div class="app-header__inner">
+      <div class="brand">
+        <div class="brand__mark" aria-hidden="true">⚡</div>
+        <div>
+          <div class="brand__title">Quiz App</div>
+          <div class="brand__subtitle">Programming MCQs · 15s each</div>
+        </div>
+      </div>
+
+      <div class="header-actions">
+        <div class="best-score" aria-live="polite">
+          <span class="best-score__label">Best:</span>
+          <span class="best-score__value" id="bestScore">—</span>
+        </div>
+
+        <button class="theme-toggle" type="button" id="themeToggle" aria-label="Toggle dark or light mode">
+          <span class="theme-toggle__icon" aria-hidden="true">🌓</span>
+          <span class="theme-toggle__text">Theme</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main id="main" class="container" aria-live="polite">
+    <!-- ===================== Welcome Screen ===================== -->
+    <section class="view view--active" id="screenWelcome" data-view="welcome">
+      <div class="hero">
+        <div class="hero__glow" aria-hidden="true"></div>
+        <div class="quiz-card glass">
+          <div class="quiz-card__head">
+            <h1 class="quiz-title">Quiz App</h1>
+            <p class="quiz-lead">Test your programming knowledge with fast, timed MCQs. Keyboard shortcuts: <b>A/B/C/D</b> then <b>Enter</b>.</p>
+          </div>
+
+          <div class="quiz-card__meta">
+            <div class="meta-pill">⏱️ 15 seconds / question</div>
+            <div class="meta-pill">🔀 Shuffle enabled</div>
+            <div class="meta-pill">🧠 1 mark per correct</div>
+          </div>
+
+          <div class="quiz-card__actions">
+            <button class="btn btn-primary" type="button" id="startBtn">
+              Start Quiz →
+            </button>
+            <button class="btn btn-ghost" type="button" id="resetBestBtn" title="Clear saved best score">
+              Reset Best
+            </button>
+          </div>
+
+          <p class="fineprint">No external libraries. Vanilla JS only.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================== Quiz Screen ===================== -->
+    <section class="view" id="screenQuiz" data-view="quiz" aria-hidden="true">
+      <div class="quiz-card glass quiz-card--quiz">
+        <div class="top-row">
+          <div class="left">
+            <div class="kicker">Question</div>
+            <div class="counter" id="questionCounter">Question 1 of 10</div>
+          </div>
+
+          <div class="right">
+            <div class="kicker">Time Left</div>
+            <div class="timer" aria-live="polite">
+              <span class="timer__value" id="timeLeft">15</span>
+              <span class="timer__unit">s</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="progress-wrap" aria-label="Progress">
+          <div class="progress-bar" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" id="progressBar">
+            <div class="progress-bar__fill" id="progressFill"></div>
+          </div>
+          <div class="progress-percent" id="progressPercent">0%</div>
+        </div>
+
+        <div class="question" id="questionText">—</div>
+
+        <div class="options" role="list" aria-label="Options">
+          <button class="option" type="button" data-opt="0" id="opt0" aria-label="Option A">
+            <span class="option__key">A</span>
+            <span class="option__text" id="optText0">Option</span>
+          </button>
+          <button class="option" type="button" data-opt="1" id="opt1" aria-label="Option B">
+            <span class="option__key">B</span>
+            <span class="option__text" id="optText1">Option</span>
+          </button>
+          <button class="option" type="button" data-opt="2" id="opt2" aria-label="Option C">
+            <span class="option__key">C</span>
+            <span class="option__text" id="optText2">Option</span>
+          </button>
+          <button class="option" type="button" data-opt="3" id="opt3" aria-label="Option D">
+            <span class="option__key">D</span>
+            <span class="option__text" id="optText3">Option</span>
+          </button>
+        </div>
+
+        <div class="actions">
+          <button class="btn btn-secondary" type="button" id="prevBtn">
+            ← Previous
+          </button>
+
+          <div class="actions__right">
+            <div class="hint" aria-hidden="true">Select A/B/C/D</div>
+            <button class="btn btn-primary" type="button" id="nextBtn">
+              Next →
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================== Result Screen ===================== -->
+    <section class="view" id="screenResult" data-view="result" aria-hidden="true">
+      <div class="quiz-card glass quiz-card--result">
+        <div class="result-header">
+          <h2 class="result-title">Your Results</h2>
+          <div class="result-badge" id="perfBadge">—</div>
+        </div>
+
+        <div class="score-grid" role="list">
+          <div class="stat">
+            <div class="stat__label">Total Questions</div>
+            <div class="stat__value" id="statTotal">0</div>
+          </div>
+          <div class="stat">
+            <div class="stat__label">Correct</div>
+            <div class="stat__value stat__value--good" id="statCorrect">0</div>
+          </div>
+          <div class="stat">
+            <div class="stat__label">Wrong</div>
+            <div class="stat__value stat__value--bad" id="statWrong">0</div>
+          </div>
+          <div class="stat">
+            <div class="stat__label">Percentage</div>
+            <div class="stat__value" id="statPercent">0%</div>
+          </div>
+          <div class="stat stat--wide">
+            <div class="stat__label">Score</div>
+            <div class="stat__value" id="statScore">0 / 0</div>
+          </div>
+        </div>
+
+        <div class="result-actions">
+          <button class="btn btn-primary" type="button" id="restartBtn">
+            Restart Quiz ↻
+          </button>
+          <button class="btn btn-ghost" type="button" id="reviewBtn">
+            Review Answers
+          </button>
+        </div>
+
+        <p class="fineprint" id="bestUpdate">—</p>
+      </div>
+    </section>
+
+    <!-- ===================== Review Screen ===================== -->
+    <section class="view" id="screenReview" data-view="review" aria-hidden="true">
+      <div class="quiz-card glass quiz-card--review">
+        <div class="review-header">
+          <h2 class="result-title">Answer Review</h2>
+          <p class="review-sub">Correct answers are marked in <b class="good">green</b>, wrong ones in <b class="bad">red</b>.</p>
+        </div>
+
+        <div class="review-list" id="reviewList" aria-label="Review answers"></div>
+
+        <div class="result-actions">
+          <button class="btn btn-primary" type="button" id="backToResultBtn">
+            Back to Results
+          </button>
+          <button class="btn btn-ghost" type="button" id="reviewRestartBtn">
+            Restart Quiz
+          </button>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <canvas id="confetti" class="confetti-canvas" aria-hidden="true"></canvas>
+
+  <script src="script.js"></script>
+</body>
+</html>
+
